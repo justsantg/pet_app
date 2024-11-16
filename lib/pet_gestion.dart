@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'vaccine_checkup_page.dart'; // Importa la página de chequeo/vacunas
 
 class PetListPage extends StatefulWidget {
   const PetListPage({super.key});
@@ -26,6 +27,7 @@ class _PetListPageState extends State<PetListPage> {
         children: [
           _buildPetInputFields(),
           Expanded(child: _buildPetList()),
+          _buildNavigateToVaccineButton(), // Botón para navegar a la página de vacunas
         ],
       ),
     );
@@ -48,8 +50,7 @@ class _PetListPageState extends State<PetListPage> {
           const SizedBox(height: 8),
           TextField(
             controller: _ageController,
-            decoration: const InputDecoration(labelText: 'Pet Age'),
-            keyboardType: TextInputType.number, // Solo números
+            decoration: const InputDecoration(labelText: 'Pet Age (e.g., "1 year" or "6 months")'),
           ),
           const SizedBox(height: 8),
           ElevatedButton(
@@ -75,7 +76,7 @@ class _PetListPageState extends State<PetListPage> {
             final pet = listPets[index];
             return ListTile(
               title: Text(pet['name']),
-              subtitle: Text('${pet['type']} - Age: ${pet['age']}'),
+              subtitle: Text('${pet['type']} - Age: ${pet['age']}'), // Muestra la edad tal como se ingresó
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -96,6 +97,31 @@ class _PetListPageState extends State<PetListPage> {
     );
   }
 
+  Widget _buildNavigateToVaccineButton() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ElevatedButton(
+        onPressed: () async {
+          final snapshot = await _petCollection.get();
+          final listPets = snapshot.docs.map((doc) => {
+            'id': doc.id,
+            'name': doc['name'],
+            'type': doc['type'],
+            'age': doc['age'],
+          }).toList();
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => VaccineCheckupPage(pets: listPets, petId: '1',), // Pasar la lista de mascotas
+            ),
+          );
+        },
+        child : const Text('Ir a Asignar Vacuna/Chequeo'),
+      ),
+    );
+  }
+
   void _addPet() {
     if (_nameController.text.isNotEmpty && 
         _typeController.text.isNotEmpty && 
@@ -103,7 +129,7 @@ class _PetListPageState extends State<PetListPage> {
       _petCollection.add({
         'name': _nameController.text,
         'type': _typeController.text,
-        'age': int.tryParse(_ageController.text) ?? 0, // Convertir a entero
+        'age': _ageController.text, // Almacena la edad como cadena
       });
       _clearInputFields();
     }
@@ -113,7 +139,7 @@ class _PetListPageState extends State<PetListPage> {
     _editingPetId = pet.id;
     _nameController.text = pet['name'];
     _typeController.text = pet['type'];
-    _ageController.text = pet['age'].toString();
+    _ageController.text = pet['age']; // Carga la edad como cadena
   }
 
   void _updatePet() {
@@ -124,12 +150,12 @@ class _PetListPageState extends State<PetListPage> {
       _petCollection.doc(_editingPetId).update({
         'name': _nameController.text,
         'type': _typeController.text,
-        'age': int.tryParse(_ageController.text) ?? 0,
+        'age': _ageController.text, // Almacena la edad como cadena
       });
       _clearInputFields();
       _editingPetId = null; // Restablecer el ID de edición
     }
-      }
+  }
 
   void _deletePet(String id) {
     _petCollection.doc(id).delete();
