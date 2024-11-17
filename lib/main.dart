@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:pet_app/vaccine_checkup_page.dart';
+import 'package:pet_app/assign_appointment_page.dart';
 import 'pet_gestion.dart';
 
 // Reemplaza estos valores con tu configuración de Firebase
@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -58,11 +58,14 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                // Aquí podrías pasar un ID de mascota si es necesario
+              onPressed: () async {
+                // Obtener la lista de mascotas desde Firestore
+                final listPets = await _fetchPets();
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const VaccineCheckupPage(petId: '1', pets: [],)),
+                  MaterialPageRoute(
+                    builder: (context) => AssignAppointmentPage(pets: listPets, petId: '',),
+                  ),
                 );
               },
               child: const Text('Ir a Asignar Vacuna/Chequeo'),
@@ -71,5 +74,16 @@ class HomePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<List<Map<String, dynamic>>> _fetchPets() async {
+    final CollectionReference petCollection = FirebaseFirestore.instance.collection('pets');
+    QuerySnapshot snapshot = await petCollection.get();
+    return snapshot.docs.map((doc) => {
+      'id': doc.id,
+      'name': doc['name'],
+      'type': doc['type'],
+      'age': doc['age'],
+    }).toList();
   }
 }

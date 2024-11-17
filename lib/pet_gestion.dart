@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'vaccine_checkup_page.dart'; // Importa la página de chequeo/vacunas
+import 'package:pet_app/assign_appointment_page.dart';
+
 
 class PetListPage extends StatefulWidget {
   const PetListPage({super.key});
@@ -102,24 +103,27 @@ class _PetListPageState extends State<PetListPage> {
       padding: const EdgeInsets.all(8.0),
       child: ElevatedButton(
         onPressed: () async {
-          final snapshot = await _petCollection.get();
-          final listPets = snapshot.docs.map((doc) => {
-            'id': doc.id,
-            'name': doc['name'],
-            'type': doc['type'],
-            'age': doc['age'],
-          }).toList();
-
+          final listPets = await _fetchPets(); // Obtener la lista de mascotas
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => VaccineCheckupPage(pets: listPets, petId: '1',), // Pasar la lista de mascotas
+              builder: (context) => AssignAppointmentPage(pets: listPets, petId: '',), // Pasar la lista de mascotas
             ),
           );
         },
-        child : const Text('Ir a Asignar Vacuna/Chequeo'),
+        child: const Text('Ir a Asignar Vacuna/Chequeo'),
       ),
     );
+  }
+
+  Future<List<Map<String, dynamic>>> _fetchPets() async {
+    QuerySnapshot snapshot = await _petCollection.get();
+    return snapshot.docs.map((doc) => {
+      'id': doc.id,
+      'name': doc['name'],
+      'type': doc['type'],
+      'age': doc['age'],
+    }).toList();
   }
 
   void _addPet() {
@@ -128,7 +132,7 @@ class _PetListPageState extends State<PetListPage> {
         _ageController.text.isNotEmpty) {
       _petCollection.add({
         'name': _nameController.text,
-        'type': _typeController.text,
+                'type': _typeController.text,
         'age': _ageController.text, // Almacena la edad como cadena
       });
       _clearInputFields();
