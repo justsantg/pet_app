@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pet_app/assign_appointment_page.dart';
+import 'map_page.dart';
 import 'pet_gestion.dart';
 
 // Reemplaza estos valores con tu configuración de Firebase
@@ -46,7 +47,7 @@ class HomePage extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: [ // Aquí debes asegurarte de que 'children' está definido correctamente
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -59,7 +60,6 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                // Obtener la lista de mascotas desde Firestore
                 final listPets = await _fetchPets();
                 Navigator.push(
                   context,
@@ -69,6 +69,16 @@ class HomePage extends StatelessWidget {
                 );
               },
               child: const Text('Ir a Asignar Vacuna/Chequeo'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MapPage()),
+                );
+              },
+              child: const Text('Ir al Mapa'),
             ),
           ],
         ),

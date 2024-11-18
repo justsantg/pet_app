@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class AssignAppointmentPage extends StatelessWidget {
   final List<Map<String, dynamic>> pets;
 
-  const AssignAppointmentPage({Key? key, required this.pets, required String petId}) : super(key: key);
+  const AssignAppointmentPage({super.key, required this.pets, required String petId});
 
   @override
   Widget build(BuildContext context) {
@@ -191,9 +191,9 @@ class AssignAppointmentPage extends StatelessWidget {
 
       // Mostrar un SnackBar con la confirmación de la eliminación
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Cita eliminada.'),
-          duration: const Duration(seconds: 3),
+        const SnackBar(
+          content: Text('Cita eliminada.'),
+          duration: Duration(seconds: 3),
         ),
       );
     } catch (e) {
