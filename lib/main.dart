@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pet_app/assign_appointment_page.dart';
 import 'map_page.dart';
 import 'pet_gestion.dart';
+import 'chat_page.dart'; // Asegúrate de importar tu nueva página de chat
 
 // Reemplaza estos valores con tu configuración de Firebase
 const FirebaseOptions firebaseOptions = FirebaseOptions(
@@ -30,13 +31,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomePage(),
+      home: HomePage(),
     );
   }
 }
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+    HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +48,7 @@ class HomePage extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [ // Aquí debes asegurarte de que 'children' está definido correctamente
+          children: [
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -79,6 +80,16 @@ class HomePage extends StatelessWidget {
                 );
               },
               child: const Text('Ir al Mapa'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ChatPage()), // Navega a la pantalla de chat
+                );
+              },
+              child: const Text('Ir al Chat con IA'), // Botón para ir al chat
             ),
           ],
         ),
