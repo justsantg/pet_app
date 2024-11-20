@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -77,7 +75,6 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
-  // Función para mostrar el diálogo con la ubicación actual
   void _showLocationDialog() {
     showDialog(
       context: context,
@@ -101,18 +98,15 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  // Función para guardar la ubicación actual
   Future<void> _saveLocation() async {
     if (_currentLocation != null) {
       setState(() {
         _savedLocations.add(LatLng(_currentLocation!.latitude!, _currentLocation!.longitude!));
-           });
+      });
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Ubicación guardada.")),
       );
-
-      // Aquí puedes agregar la lógica para guardar en Firestore si es necesario.
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("No se puede guardar la ubicación. Intenta de nuevo.")),
@@ -120,7 +114,6 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
-  // Función para mostrar las ubicaciones guardadas
   void _showSavedLocationsDialog() {
     showDialog(
       context: context,
@@ -134,8 +127,11 @@ class _MapPageState extends State<MapPage> {
               itemCount: _savedLocations.length,
               itemBuilder: (context, index) {
                 final location = _savedLocations[index];
-                return ListTile(
-                  title: Text("Lat: ${location.latitude}, Lon: ${location.longitude}"),
+                return Card(
+                  margin: const EdgeInsets.symmetric(vertical: 4),
+                  child: ListTile(
+                    title: Text("Lat: ${location.latitude}, Lon: ${location.longitude}"),
+                  ),
                 );
               },
             ),
@@ -146,14 +142,13 @@ class _MapPageState extends State<MapPage> {
                 Navigator.of(context).pop(); // Cierra el diálogo
               },
               child: const Text("Cerrar"),
-            ),
+                          ),
           ],
         );
       },
     );
   }
 
-  // Función para generar puntos adicionales aleatorios
   void _generateAdditionalPoints() {
     setState(() {
       if (_currentLocation != null) {
@@ -164,124 +159,150 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
-  // Aquí deberías implementar la función para cargar ubicaciones guardadas
   Future<void> _loadSavedLocations() async {
-    // Lógica para cargar ubicaciones desde Firestore o cualquier otra fuente
+    // Aquí puedes implementar la lógica para cargar ubicaciones desde Firestore o cualquier otra fuente.
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Map OpenStreetMap')),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _placeController,
-                    decoration: const InputDecoration(
-                      labelText: 'Buscar lugar',
-                      border: OutlineInputBorder(),
+      appBar: AppBar(
+        title: const Text('Mapa de Mascotas'),
+        backgroundColor: const Color.fromRGBO(150, 95, 212, 1.000), // Color del AppBar
+        foregroundColor: const Color.fromRGBO(139, 212, 80, 1.000), // Color del texto del AppBar
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              const Color(0xFF8bd450), // Color de inicio del degradado
+              const Color(0xFF965fd4), // Color de fin del degradado
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _placeController,
+                      decoration: const InputDecoration(
+                        labelText: 'Buscar lugar',
+                        border: OutlineInputBorder(),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: _searchPlace,
-                  child: const Text('Buscar'),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: _saveLocation, // Llama a la función para guardar ubicaciones
-                  child: const Text('Guardar Ubicación'),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: _showSavedLocationsDialog, // Muestra ubicaciones guardadas
-                  child: const Text('Ver Ubicaciones'),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: _currentLocation == null
-                ? const Center(child: CircularProgressIndicator())
-                : FlutterMap(
-                    options: MapOptions(
-                      center: _enteredLocation ??
-                          LatLng(
-                            _currentLocation!.latitude!,
-                            _currentLocation!.longitude!,
-                          ),
-                      zoom: 13.0,
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: _searchPlace,
+                    child: const Text('Buscar'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1d1a2f), // Color del botón
+                      foregroundColor: const Color(0xFF8bd450), // Color del texto
                     ),
-                    children: [
-                      TileLayer(
-                        urlTemplate:
-                            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                        subdomains: const ['a', 'b', 'c'],
-                      ),
-                      MarkerLayer(
-                        markers: [
-                          Marker(
-                            width: 80.0,
-                            height: 80.0,
-                            point: LatLng(
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: _saveLocation, // Llama a la función para guardar ubicaciones
+                    child: const Text('Guardar Ubicación'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1d1a2f), // Color del botón
+                      foregroundColor: const Color(0xFF8bd450), // Color del texto
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: _showSavedLocationsDialog, // Muestra ubicaciones guardadas
+                    child: const Text('Ver Ubicaciones'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1d1a2f), // Color del botón
+                      foregroundColor: const Color(0xFF8bd450), // Color del texto
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: _currentLocation == null
+                  ? const Center(child: CircularProgressIndicator())
+                  : FlutterMap(
+                      options: MapOptions(
+                        center: _enteredLocation ??
+                            LatLng(
                               _currentLocation!.latitude!,
                               _currentLocation!.longitude!,
                             ),
-                            builder: (ctx) => GestureDetector(
-                              onTap: () {
-                                _showLocationDialog(); // Muestra el diálogo con la ubicación
-                              },
-                              child: const Icon(
-                                Icons.location_on,
-                                color: Colors.red,
-                                size: 40,
-                              ),
-                            ),
-                          ),
-                          if (_enteredLocation != null)
+                        zoom: 13.0,
+                      ),
+                      children: [
+                        TileLayer(
+                          urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                          subdomains: const ['a', 'b', 'c'],
+                        ),
+                        MarkerLayer(
+                          markers: [
                             Marker(
                               width: 80.0,
                               height: 80.0,
-                              point: _enteredLocation!,
+                              point: LatLng(
+                                _currentLocation!.latitude!,
+                                _currentLocation!.longitude!,
+                              ),
+                              builder: (ctx) => GestureDetector(
+                                onTap: () {
+                                  _showLocationDialog(); // Muestra el diálogo con la ubicación
+                                },
+                                child: const Icon(
+                                  Icons.location_on,
+                                  color: Colors.red,
+                                  size: 40,
+                                ),
+                              ),
+                            ),
+                            if (_enteredLocation != null)
+                              Marker(
+                                width: 80.0,
+                                height: 80.0,
+                                point: _enteredLocation!,
+                                builder: (                                ctx) => const Icon(
+                                  Icons.location_on,
+                                  color: Colors.purple,
+                                  size: 40,
+                                ),
+                              ),
+                            ..._additionalPoints.map((point) => Marker(
+                              width: 80.0,
+                              height: 80.0,
+                              point: point,
                               builder: (ctx) => const Icon(
                                 Icons.location_on,
-                                color: Colors.purple,
-                                size: 40,
-                                                              ),
-                            ),
-                          ..._additionalPoints.map((point) => Marker(
-                                width: 80.0,
-                                height: 80.0,
-                                point: point,
-                                builder: (ctx) => const Icon(
-                                  Icons.location_on,
-                                  color: Colors.blue,
-                                  size: 30,
-                                ),
-                              )),
-                          ..._savedLocations.map((point) => Marker(
-                                width: 80.0,
-                                height: 80.0,
-                                point: point,
-                                builder: (ctx) => const Icon(
-                                  Icons.location_on,
-                                  color: Colors.green,
-                                  size: 30,
-                                ),
-                              )),
-                        ],
-                      ),
-                    ],
-                  ),
-          ),
-        ],
+                                color: Colors.blue,
+                                size: 30,
+                              ),
+                            )),
+                            ..._savedLocations.map((point) => Marker(
+                              width: 80.0,
+                              height: 80.0,
+                              point: point,
+                              builder: (ctx) => const Icon(
+                                Icons.location_on,
+                                color: Colors.green,
+                                size: 30,
+                              ),
+                            )),
+                          ],
+                        ),
+                      ],
+                    ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -291,11 +312,13 @@ class _MapPageState extends State<MapPage> {
               await _getLocation();
             },
             child: const Icon(Icons.my_location),
+            backgroundColor: const Color(0xFF1d1a2f), // Color del botón
           ),
           const SizedBox(height: 16),
           FloatingActionButton(
             onPressed: _generateAdditionalPoints, // Genera puntos adicionales
             child: const Icon(Icons.add_location_alt),
+            backgroundColor: const Color(0xFF1d1a2f), // Color del botón
           ),
         ],
       ),
@@ -305,6 +328,5 @@ class _MapPageState extends State<MapPage> {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
   runApp(const MaterialApp(home: MapPage()));
 }
