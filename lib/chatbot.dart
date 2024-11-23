@@ -1,49 +1,14 @@
 import 'package:flutter/material.dart';
 import 'dart:async'; // Para simular un retraso en la respuesta
 
-class ChatBot extends StatefulWidget {
+class Chatbot extends StatefulWidget {
   @override
-  _ChatBotState createState() => _ChatBotState();
+  _ChatbotState createState() => _ChatbotState();
 }
 
-class _ChatBotState extends State<ChatBot> {
+class _ChatbotState extends State<Chatbot> {
   final TextEditingController _controller = TextEditingController();
-  final List<Map<String, String>> _messages = [];
-
-  void _sendMessage(String message) {
-    if (message.isEmpty) return;
-
-    setState(() {
-      _messages.add({"sender": "user", "message": message});
-    });
-    
-    _controller.clear();
-    _getBotResponse(message);
-  }
-
-  Future<void> _getBotResponse(String message) async {
-    // Simulamos un tiempo de respuesta
-    await Future.delayed(Duration(seconds: 1));
-
-    String response;
-    if (message.contains("mascota") || message.contains("cita")) {
-      response = "¿Qué información necesitas sobre tus mascotas o citas?";
-    } else if (message.contains("precio") || message.contains("servicio")) {
-      response = "Los precios de los servicios para mascotas varían. ¿Qué servicio te interesa?";
-    } else if (message.contains("agendar") || message.contains("cita")) {
-      response = "Claro, ¿qué tipo de cita deseas agendar y para cuándo?";
-    } else if (message.contains("gracias")) {
-      response = "¡De nada! Si necesitas más ayuda, aquí estoy.";
-    } else if (message.contains("adiós")) {
-      response = "¡Hasta luego! Espero verte pronto.";
-    } else {
-      response = "Lo siento, no entiendo tu pregunta. ¿Puedes reformularla?";
-    }
-
-    setState(() {
-      _messages.add({"sender": "bot", "message": response});
-    });
-  }
+  List<Map<String, String>> _messages = [];
 
   @override
   Widget build(BuildContext context) {
@@ -53,34 +18,10 @@ class _ChatBotState extends State<ChatBot> {
           child: ListView.builder(
             itemCount: _messages.length,
             itemBuilder: (context, index) {
-              return ListTile(
-                title: Align(
-                  alignment: _messages[index]["sender"] == "user"
-                      ? Alignment.centerRight
-                      : Alignment.centerLeft,
-                  child: Container(
-                    padding: EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: _messages[index]["sender"] == "user"
-                          ? Colors.blueAccent
-                          : Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      _messages[index]["message"]!,
-                      style: TextStyle(
-                        color: _messages[index]["sender"] == "user"
-                            ? Colors.white
-                            : Colors.black,
-                      ),
-                    ),
-                  ),
-                ),
-              );
+              return _buildMessageBubble(_messages[index]);
             },
           ),
         ),
-
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
@@ -89,11 +30,10 @@ class _ChatBotState extends State<ChatBot> {
                 child: TextField(
                   controller: _controller,
                   decoration: InputDecoration(
-                    hintText: 'Escribe mensajes como mascota, cita, precio aquí...',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    contentPadding: EdgeInsets.all(10),
+                    hintText: 'Escribe un mensaje...',
+                    border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.white,
                   ),
                   onSubmitted: (value) {
                     _sendMessage(value);
@@ -111,5 +51,79 @@ class _ChatBotState extends State<ChatBot> {
         ),
       ],
     );
+  }
+
+   Widget _buildMessageBubble(Map<String, String> message) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+    child: Align(
+      alignment: message['sender'] == "Usuario" ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        padding: EdgeInsets.all(10),
+        margin: EdgeInsets.only(top: 5, bottom: 5),
+        decoration: BoxDecoration(
+          color: message['sender'] == "Usuario" ? const Color(0xFF8BD450) : const Color(0xFF965FD4),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Column(
+          crossAxisAlignment: message['sender'] == "Usuario" ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          children: [
+            Text(
+              message['sender']!,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: message['sender'] == "Usuario" ? Colors.blue[800] : Colors.black,
+              ),
+            ),
+            SizedBox(height: 5),
+            Text(
+              message['message']!,
+              style: TextStyle(color: Colors.black),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+
+  void _sendMessage(String message) {
+    if (message.isEmpty) return;
+
+    setState(() {
+      _messages.add({"sender": "Usuario", "message": message});
+    });
+
+    _controller.clear();
+    _getBotResponse(message);
+  }
+
+  Future<void> _getBotResponse(String message) async {
+    await Future.delayed(const Duration(seconds: 1));
+
+    String response;
+
+    String lowerMessage = message.toLowerCase();
+
+    if (lowerMessage.contains("cuidado de mascotas")) {
+      response = "Visita a tu veterinario de confianza regularmente, atiende las necesidades nutricionales de tu mascota, quedate atento a las vacunas de tu mascota, entrena y juega con ella regularmente, manten a tu mascota limpia y entregales todo tu amor.";
+    } else if (lowerMessage.contains("agendar cita")) {
+      response = "Las citas ayudan a detectar posibles problemas de salud en tu mascota y, con suerte, evitar que se conviertan en algo grave, Por favor, para agendar una cita, comunícate con nosotros al numero 300455668.";
+    } else if (lowerMessage.contains("vacunas")) {
+      response = "Las vacunas son esenciales para la salud de tu mascota,  Las vacunas protegen a su mascota de enfermedades altamente contagiosas y mortales y mejoran su calidad de vida en general. Asegúrate de seguir el calendario de vacunación.";
+    } else if (lowerMessage.contains("consejos de salud")) {
+      response = "Lo más vital es que siempre tengan disponible agua fresca, limpia y potable, así como una alimentación específica que logre nutrirlo de acuerdo a sus necesidades energéticas, de edad, raza, estilo de vida o estado de salud en el que se encuentre y según lo indique su médico veterinario zootecnista.";
+    } else if (lowerMessage.contains("gracias")) {
+      response = "¡De nada! Si necesitas más información, no dudes en preguntar.";
+    } else if (lowerMessage.contains("adiós")) {
+      response = "¡Hasta luego! Cuida bien de tu mascota.";
+    } else {
+      response = "Lo siento, no entiendo tu pregunta. ¿Puedes reformularla?";
+    }
+
+    setState(() {
+      _messages.add({"sender": "Bot", "message": response});
+    });
   }
 }

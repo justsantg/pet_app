@@ -80,10 +80,11 @@ class _MapPageState extends State<MapPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Ubicación Actual"),
+          title: const Text("Ubicación Actual", style: TextStyle(color: Colors.black)), // Cambiar color del texto
           content: Text(
             "Latitud: ${_currentLocation?.latitude}\n"
             "Longitud: ${_currentLocation?.longitude}",
+            style: const TextStyle(color: Colors.black), // Cambiar color del texto
           ),
           actions: [
             TextButton(
@@ -119,7 +120,7 @@ class _MapPageState extends State<MapPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Ubicaciones Guardadas"),
+          title: const Text("Ubicaciones Guardadas", style: TextStyle(color: Colors.black)), // Cambiar color del texto
           content: SizedBox(
             width: 300,
             height: 200,
@@ -130,19 +131,18 @@ class _MapPageState extends State<MapPage> {
                 return Card(
                   margin: const EdgeInsets.symmetric(vertical: 4),
                   child: ListTile(
-                    title: Text("Lat: ${location.latitude}, Lon: ${location.longitude}"),
+                    title: Text("Lat: ${location.latitude}, Lon: ${location.longitude}", style: const TextStyle(color: Colors.black)), // Cambiar color del texto
                   ),
                 );
               },
-            ),
-          ),
+            ),          ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Cierra el diálogo
               },
               child: const Text("Cerrar"),
-                          ),
+            ),
           ],
         );
       },
@@ -172,16 +172,7 @@ class _MapPageState extends State<MapPage> {
         foregroundColor: const Color.fromRGBO(139, 212, 80, 1.000), // Color del texto del AppBar
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xFF8bd450), // Color de inicio del degradado
-              const Color(0xFF965fd4), // Color de fin del degradado
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
+        color: Colors.black, // Fondo negro
         child: Column(
           children: [
             Padding(
@@ -195,7 +186,11 @@ class _MapPageState extends State<MapPage> {
                       decoration: const InputDecoration(
                         labelText: 'Buscar lugar',
                         border: OutlineInputBorder(),
+                        labelStyle: TextStyle(color: Colors.white), // Color del texto de la etiqueta
+                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)), // Color del borde
+                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)), // Color del borde al enfocar
                       ),
+                      style: const TextStyle(color: Colors.white), // Color del texto
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -261,7 +256,7 @@ class _MapPageState extends State<MapPage> {
                                 child: const Icon(
                                   Icons.location_on,
                                   color: Colors.red,
-                                  size: 40,
+                                                                    size: 40,
                                 ),
                               ),
                             ),
@@ -270,7 +265,7 @@ class _MapPageState extends State<MapPage> {
                                 width: 80.0,
                                 height: 80.0,
                                 point: _enteredLocation!,
-                                builder: (                                ctx) => const Icon(
+                                builder: (ctx) => const Icon(
                                   Icons.location_on,
                                   color: Colors.purple,
                                   size: 40,
@@ -330,3 +325,4 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MaterialApp(home: MapPage()));
 }
+                                 

@@ -26,16 +26,7 @@ class _PetListPageState extends State<PetListPage> {
         foregroundColor: const Color.fromRGBO(139, 212, 80, 1.000), // Color del texto del AppBar
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xFF8bd450), // Color de inicio del degradado
-              const Color(0xFF965fd4), // Color de fin del degradado
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
+        color: Colors.black, // Fondo negro
         child: Column(
           children: [
             _buildPetInputFields(),

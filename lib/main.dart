@@ -50,16 +50,7 @@ class HomePage extends StatelessWidget {
         foregroundColor: const Color.fromRGBO(139, 212, 80, 1.000), // Color del AppBar
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xFF8bd450), // Color de inicio del degradado
-              const Color(0xFF965fd4), // Color de fin del degradado
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
+        color: Colors.black, // Fondo negro
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -105,7 +96,7 @@ class HomePage extends StatelessWidget {
               const SizedBox(height: 20),
               _buildElevatedButton(
                 context,
-                'Ir al Chat con IA',
+                'Ir al Chat con Nuestro Chatbot',
                 Icons.chat,
                 () {
                   Navigator.push(
@@ -135,7 +126,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-    Future<List<Map<String, dynamic>>> _fetchPets() async {
+  Future<List<Map<String, dynamic>>> _fetchPets() async {
     final CollectionReference petCollection = FirebaseFirestore.instance.collection('pets');
     QuerySnapshot snapshot = await petCollection.get();
     return snapshot.docs.map((doc) => {

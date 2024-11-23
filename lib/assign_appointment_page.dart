@@ -12,19 +12,10 @@ class AssignAppointmentPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Asignar Cita'),
         backgroundColor: const Color.fromRGBO(150, 95, 212, 1.000), // Color de la AppBar
-        foregroundColor: const Color.fromRGBO(139, 212, 80, 1.000), // Color del texto
+        foregroundColor: const Color(0xFF8BD450), // Color del texto
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xFF8bd450), // Color de inicio del degradado
-              const Color(0xFF965fd4), // Color de fin del degradado
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
+        color: Colors.black, // Fondo negro
         child: Column(
           children: [
             Expanded(
@@ -34,14 +25,15 @@ class AssignAppointmentPage extends StatelessWidget {
                   final pet = pets[index];
                   return Card(
                     margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    color: const Color(0xFF1d1a2f), // Color del card
                     child: ListTile(
-                      title: Text(pet['name']),
-                      subtitle: Text('${pet['type']} - Age: ${pet['age']}'),
+                      title: Text(pet['name'], style: const TextStyle(color: Colors.white)), // Cambiar el color del texto
+                      subtitle: Text('${pet['type']} - Age: ${pet['age']}', style: const TextStyle(color: Colors.white)), // Cambiar el color del texto
                       trailing: ElevatedButton(
                         onPressed: () {
                           _showAppointmentDialog(context, pet);
                         },
-                        child: const Text('Asignar Cita'),
+                        child: const Text('Asignar Cita', style: TextStyle(color: Colors.white)), // Cambiar el color del texto
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF1d1a2f), // Color de fondo del botón
                           foregroundColor: const Color(0xFF8bd450), // Color del texto
@@ -53,12 +45,12 @@ class AssignAppointmentPage extends StatelessWidget {
                 },
               ),
             ),
-            const Divider(),
+            const Divider(color: Colors.white), // Cambiar el color de la línea divisoria
             const Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
                 'Citas Asignadas',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white), // Cambiar el color del texto
               ),
             ),
             Expanded(
